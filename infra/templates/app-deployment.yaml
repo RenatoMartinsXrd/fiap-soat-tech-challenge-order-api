@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-app
+  labels:
+    app: {{ .Release.Name }}-app
+spec:
+  replicas: {{ .Values.app.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-app
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-app
+    spec:
+      imagePullSecrets:
+          - name: ecr-secret
+      containers:
+        - name: {{ .Release.Name }}-app
+          image: "{{ .Values.app.image }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: rds-secret
+                  key: SPRING_DATASOURCE_URL
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rds-secret
+                  key: SPRING_DATASOURCE_USERNAME
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rds-secret
+                  key: SPRING_DATASOURCE_PASSWORD
+
+            - name: ACCESS_TOKEN_MERCADO_PAGO
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-challenge-app-secret
+                  key: ACCESS_TOKEN_MERCADO_PAGO
+
+            - name: NOTIFICATION_URL_NGROK
+              valueFrom:
+                secretKeyRef:
+                  name: fiap-tech-challenge-app-secret
+                  key: NOTIFICATION_URL_NGROK
+
+          resources:
+            requests:
+              cpu: "{{ .Values.app.resources.requests.cpu }}"
+              memory: "{{ .Values.app.resources.requests.memory }}"
+            limits:
+              cpu: "{{ .Values.app.resources.limits.cpu }}"
+              memory: "{{ .Values.app.resources.limits.memory }}"
+
+#          livenessProbe:
+#            httpGet:
+#              path: /actuator/health
+#              port: 8080
+#            initialDelaySeconds: 10
+#            periodSeconds: 5
+#
+#          readinessProbe:
+#            httpGet:
+#              path: /actuator/health
+#              port: 8080
+#            initialDelaySeconds: 5
+#            periodSeconds: 5

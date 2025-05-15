@@ -1,0 +1,41 @@
+version: '3.5'
+
+services:
+  postgres-order:
+    container_name: postgres_order_container
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres-api-order}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_order:/data/postgres
+    ports:
+      - "5434:5432"
+    networks:
+      - order-network
+    restart: unless-stopped
+
+  pgadmin-order:
+    container_name: pgadmin_order_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_order:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5052}:80"
+    networks:
+      - order-network
+    restart: unless-stopped
+
+networks:
+  order-network:
+    driver: bridge
+
+volumes:
+  postgres_order:
+  pgadmin_order:

@@ -1,0 +1,5 @@
+CREATE TABLE order_status_entity (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    status VARCHAR(50) NOT NULL UNIQUE,
+    description VARCHAR(255)
+);

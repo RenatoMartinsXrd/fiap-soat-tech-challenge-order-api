@@ -1,0 +1,29 @@
+app:
+  image: 436648017334.dkr.ecr.us-east-1.amazonaws.com/tech-challenge/fiap-soat-tech-challenge-fase-3-app:latest
+  imagePullPolicy: Always
+  replicas: 1
+  resources:
+    requests:
+      cpu: "400m"
+      memory: "512Mi"
+    limits:
+      cpu: "800m"
+      memory: "1Gi"
+  hpa:
+    minReplicas: 3
+    maxReplicas: 8
+    averageUtilization: 60
+
+db:
+  image: postgres:13
+  storage:
+    size: 1Gi
+
+secrets:
+  webhook:
+    ACCESS_TOKEN_MERCADO_PAGO: substituir
+    NOTIFICATION_URL_NGROK: substituir
+
+debug:
+  enabled: true
+  image: postgres:latest
