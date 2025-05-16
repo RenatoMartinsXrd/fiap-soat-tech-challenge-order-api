@@ -1,0 +1,110 @@
+name: Java Build & Deploy
+
+env:
+  SERVICE_REPO_NAME: fiap-soat-tech-challenge-order-api
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  pre-build:
+    name: Pre Building
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+
+      - name: Construir e testar
+        run: mvn clean install
+
+  build:
+    name: Building Application
+    needs: pre-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Definir variáveis de versão
+        run: echo "TIMESTAMP=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+
+      - name: Fazer login no Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Construir a imagem Docker com múltiplas tags
+        run: |
+          IMAGE_URI=${{ vars.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
+          docker build -t $IMAGE_URI:${{ env.TIMESTAMP }} .
+          docker tag $IMAGE_URI:${{ env.TIMESTAMP }} $IMAGE_URI:latest
+
+      - name: Enviar a imagem para o Amazon ECR
+        run: |
+          IMAGE_URI=${{ vars.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
+          docker push $IMAGE_URI:${{ env.TIMESTAMP }}
+          docker push $IMAGE_URI:latest
+
+  deploy:
+    name: Deploying Application
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Configurar credenciais da AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Configurar acesso ao cluster
+        run: |
+          aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name ${{ vars.EKS_CLUSTER_NAME }}
+
+      - name: Criar ou atualizar ECR Secret no Kubernetes
+        run: |
+          kubectl create secret docker-registry ecr-secret \
+            --docker-server=${{ vars.ECR_REGISTRY }} \
+            --docker-username=AWS \
+            --docker-password="$(aws ecr get-login-password --region ${{ vars.AWS_REGION }})" \
+            --namespace=default --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Criar Secrets do banco no Kubernetes
+        run: |
+          kubectl create secret generic rds-secret \
+            --from-literal=SPRING_DATASOURCE_USERNAME=${{ secrets.TF_VAR_DB_USERNAME }} \
+            --from-literal=SPRING_DATASOURCE_PASSWORD=${{ secrets.TF_VAR_DB_PASSWORD }} \
+            --from-literal=SPRING_DATASOURCE_URL=${{ secrets.TF_VAR_DB_ENDPOINT }} \
+            --namespace=default --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Atualizar imagem no Helm
+        run: |
+          IMAGE_URI=${{ vars.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
+          echo "Deploying image: $IMAGE_URI:latest"
+          helm upgrade --install fiap-tech-challenge ./infra \
+            --set app.image=$IMAGE_URI:latest
