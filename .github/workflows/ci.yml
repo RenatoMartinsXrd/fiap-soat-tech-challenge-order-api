@@ -2,6 +2,14 @@ name: Java Build & Deploy
 
 env:
   SERVICE_REPO_NAME: fiap-soat-tech-challenge-order-api
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECR_REGISTRY: ${{ vars.ECR_REGISTRY }}
+  EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
+  DB_USERNAME: ${{ secrets.TF_VAR_DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.TF_VAR_DB_PASSWORD }}
+  DB_ENDPOINT: ${{ secrets.TF_VAR_DB_ENDPOINT }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 on:
   push:
@@ -45,19 +53,19 @@ jobs:
       - name: Fazer login no Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
         env:
-          AWS_REGION: ${{ vars.AWS_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
 
       - name: Construir a imagem Docker com múltiplas tags
         run: |
-          IMAGE_URI=${{ vars.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
+          IMAGE_URI=${{ env.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
           docker build -t $IMAGE_URI:${{ env.TIMESTAMP }} .
           docker tag $IMAGE_URI:${{ env.TIMESTAMP }} $IMAGE_URI:latest
 
       - name: Enviar a imagem para o Amazon ECR
         run: |
-          IMAGE_URI=${{ vars.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
+          IMAGE_URI=${{ env.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
           docker push $IMAGE_URI:${{ env.TIMESTAMP }}
           docker push $IMAGE_URI:latest
 
@@ -78,33 +86,33 @@ jobs:
       - name: Configurar credenciais da AWS
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Configurar acesso ao cluster
         run: |
-          aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name ${{ vars.EKS_CLUSTER_NAME }}
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
 
       - name: Criar ou atualizar ECR Secret no Kubernetes
         run: |
           kubectl create secret docker-registry ecr-secret \
-            --docker-server=${{ vars.ECR_REGISTRY }} \
+            --docker-server=${{ env.ECR_REGISTRY }} \
             --docker-username=AWS \
-            --docker-password="$(aws ecr get-login-password --region ${{ vars.AWS_REGION }})" \
+            --docker-password="$(aws ecr get-login-password --region ${{ env.AWS_REGION }})" \
             --namespace=default --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Criar Secrets do banco no Kubernetes
         run: |
           kubectl create secret generic rds-secret \
-            --from-literal=SPRING_DATASOURCE_USERNAME=${{ secrets.TF_VAR_DB_USERNAME }} \
-            --from-literal=SPRING_DATASOURCE_PASSWORD=${{ secrets.TF_VAR_DB_PASSWORD }} \
-            --from-literal=SPRING_DATASOURCE_URL=${{ secrets.TF_VAR_DB_ENDPOINT }} \
+            --from-literal=SPRING_DATASOURCE_USERNAME=${{ env.DB_USERNAME }} \
+            --from-literal=SPRING_DATASOURCE_PASSWORD=${{ env.DB_PASSWORD }} \
+            --from-literal=SPRING_DATASOURCE_URL=${{ env.DB_ENDPOINT }} \
             --namespace=default --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Atualizar imagem no Helm
         run: |
-          IMAGE_URI=${{ vars.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
+          IMAGE_URI=${{ env.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
           echo "Deploying image: $IMAGE_URI:latest"
-          helm upgrade --install fiap-tech-challenge ./infra \
+          helm upgrade --install ${{ env.SERVICE_REPO_NAME }} ./infra \
             --set app.image=$IMAGE_URI:latest

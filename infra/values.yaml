@@ -10,8 +10,8 @@ app:
       cpu: "800m"
       memory: "1Gi"
   hpa:
-    minReplicas: 3
-    maxReplicas: 8
+    minReplicas: 2
+    maxReplicas: 4
     averageUtilization: 60
 
 db:
