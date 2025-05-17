@@ -4,10 +4,10 @@ app:
   replicas: 1
   resources:
     requests:
-      cpu: "400m"
+      cpu: "300m"
       memory: "512Mi"
     limits:
-      cpu: "800m"
+      cpu: "600m"
       memory: "1Gi"
   hpa:
     minReplicas: 1
