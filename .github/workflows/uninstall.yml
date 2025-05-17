@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  SERVICE_REPO_NAME: fiap-soat-tech-challenge-product-api
+  SERVICE_REPO_NAME: fiap-soat-tech-challenge-order-api
   AWS_REGION: ${{ vars.AWS_REGION }}
   EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
