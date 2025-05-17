@@ -24,6 +24,6 @@ secrets:
     ACCESS_TOKEN_MERCADO_PAGO: substituir
     NOTIFICATION_URL_NGROK: substituir
 
-#debug:
-#  enabled: true
-#  image: postgres:latest
+debug:
+  replicas: 0
+  image: postgres:latest
