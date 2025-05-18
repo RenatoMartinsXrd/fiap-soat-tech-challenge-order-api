@@ -42,9 +42,9 @@ spec:
             - |
               DB_HOST=$(echo "$SPRING_DATASOURCE_URL" | sed -E 's|jdbc:postgresql://([^:/]+):[0-9]+/.*|\1|')
               DB_NAME=$(echo "$SPRING_DATASOURCE_URL" | sed -E 's|jdbc:postgresql://[^/]+/([^?]+).*|\1|')
-              until PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h "$DB_HOST" -U "$SPRING_DATASOURCE_USERNAME" -d postgres -c '\l'; do
-                echo "Esperando PostgreSQL ficar disponível..."
-                sleep 5
+              until PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h "$DB_HOST" -U "$SPRING_DATASOURCE_USERNAME" -d postgres -c "SELECT 1" >/dev/null; do
+              echo "Esperando PostgreSQL ficar disponível..."
+              sleep 5
               done
               echo "Verificando se o banco $DB_NAME existe..."
               PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h "$DB_HOST" -U "$SPRING_DATASOURCE_USERNAME" -d postgres -tc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" | grep -q 1 || \
