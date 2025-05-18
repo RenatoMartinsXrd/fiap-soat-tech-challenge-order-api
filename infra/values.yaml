@@ -23,7 +23,8 @@ secrets:
   webhook:
     ACCESS_TOKEN_MERCADO_PAGO: substituir
     NOTIFICATION_URL_NGROK: substituir
-  rds:
-    SPRING_DATASOURCE_URL: substituir
-    SPRING_DATASOURCE_USERNAME: substituir
-    SPRING_DATASOURCE_PASSWORD: substituir
+  rds: #TODO substituir valores abaixo
+    SPRING_DATASOURCE_URL: ""
+    SPRING_DATASOURCE_USERNAME: "tech_challenge"
+    SPRING_DATASOURCE_PASSWORD: "TyH2qEhgnIj41B"
+    SPRING_DATASOURCE_DATABASE: "order"
