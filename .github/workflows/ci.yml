@@ -107,7 +107,8 @@ jobs:
 
       - name: Atualizar imagem no Helm
         run: |
-          IMAGE_URI=${{ env.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
-          echo "Deploying image: $IMAGE_URI:latest"
+          IMAGE_PREFIX=${{ env.ECR_REGISTRY }}/tech-challenge
+          echo "Deploying image: $IMAGE_PREFIX/${{ env.SERVICE_REPO_NAME }}:latest"
           helm upgrade --install ${{ env.SERVICE_REPO_NAME }} ./infra \
-            --set app.image=$IMAGE_URI:latest
+            --set app.image.repositoryPrefix=$IMAGE_PREFIX \
+            --set app.image.tag=latest
