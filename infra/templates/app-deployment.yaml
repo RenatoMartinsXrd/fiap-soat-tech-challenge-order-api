@@ -15,7 +15,7 @@ spec:
         app: {{ .Release.Name }}-app
     spec:
       imagePullSecrets:
-          - name: ecr-secret
+          - name: {{ .Release.Name }}-secret
       containers:
         - name: {{ .Release.Name }}-app
           image: "{{ .Values.app.image }}"
@@ -26,19 +26,19 @@ spec:
             - name: SPRING_DATASOURCE_URL
               valueFrom:
                 secretKeyRef:
-                  name: rds-secret
+                  name: {{ .Release.Name }}-app-secret
                   key: SPRING_DATASOURCE_URL
 
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: rds-secret
+                  name: {{ .Release.Name }}-app-secret
                   key: SPRING_DATASOURCE_USERNAME
 
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: rds-secret
+                  name: {{ .Release.Name }}-app-secret
                   key: SPRING_DATASOURCE_PASSWORD
 
             - name: ACCESS_TOKEN_MERCADO_PAGO
