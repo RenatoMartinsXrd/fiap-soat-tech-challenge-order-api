@@ -15,7 +15,7 @@ spec:
         app: {{ .Release.Name }}-app
     spec:
       imagePullSecrets:
-          - name: {{ .Release.Name }}-secret
+          - name: {{ .Release.Name }}-app-secret
 
       initContainers:
         - name: init-db
