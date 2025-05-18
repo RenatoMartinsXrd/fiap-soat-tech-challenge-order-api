@@ -1,0 +1,14 @@
+
+ ██████╗ ██████╗ ██████╗ ███████╗██████╗
+██╔═══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗
+██║   ██║██████╔╝██║  ██║█████╗  ██████╔╝
+██║   ██║██╔══██╗██║  ██║██╔══╝  ██╔══██╗
+╚██████╔╝██║  ██║██████╔╝███████╗██║  ██║
+ ╚═════╝ ╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝
+
+ Aplicação      : ${spring.application.name}
+ Ambiente ativo : ${spring.profiles.active:default}
+ Porta          : ${server.port:8080}
+ Versão         : ${application.version:desconhecida}
+ Iniciada por   : ${user.name}
+ Java           : ${java.version}
