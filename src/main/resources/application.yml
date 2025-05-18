@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5434/postgres-api-order}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5434/postgres}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:changeme}
     driver-class-name: org.postgresql.Driver
@@ -23,6 +23,7 @@ spring:
     init:
       continue-on-error: true
       mode: always
+      schema-locations: classpath:create-database.sql
 
   flyway:
     baselineOnMigrate: true
