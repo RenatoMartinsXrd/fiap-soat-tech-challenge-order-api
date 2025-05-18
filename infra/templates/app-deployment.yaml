@@ -52,7 +52,7 @@ spec:
 
       containers:
         - name: {{ .Release.Name }}-app
-          image: "{{ .Values.image.repositoryPrefix }}/{{ .Release.Name }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.app.image.repositoryPrefix }}/{{ .Release.Name }}:{{ .Values.app.image.tag }}"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

@@ -47,9 +47,6 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Definir variáveis de versão
-        run: echo "TIMESTAMP=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
-
       - name: Fazer login no Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
         env:
@@ -57,16 +54,14 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Construir a imagem Docker com múltiplas tags
+      - name: Construir a imagem Docker com tag latest
         run: |
           IMAGE_URI=${{ env.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
-          docker build -t $IMAGE_URI:${{ env.TIMESTAMP }} .
-          docker tag $IMAGE_URI:${{ env.TIMESTAMP }} $IMAGE_URI:latest
+          docker build -t $IMAGE_URI:latest .
 
       - name: Enviar a imagem para o Amazon ECR
         run: |
           IMAGE_URI=${{ env.ECR_REGISTRY }}/tech-challenge/${{ env.SERVICE_REPO_NAME }}
-          docker push $IMAGE_URI:${{ env.TIMESTAMP }}
           docker push $IMAGE_URI:latest
 
   deploy:
