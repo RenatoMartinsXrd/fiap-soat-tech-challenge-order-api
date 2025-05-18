@@ -19,17 +19,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  sql:
-    init:
-      continue-on-error: true
-      mode: always
-      schema-locations: classpath:create-database.sql
-
-  flyway:
-    baselineOnMigrate: true
-    locations: classpath:db/migrations
-    undo-locations: classpath:db/undos
-
   messages:
     basename: messages
     encoding: UTF-8
