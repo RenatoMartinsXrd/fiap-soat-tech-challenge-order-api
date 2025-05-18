@@ -1,5 +1,7 @@
 app:
-  image: 436648017334.dkr.ecr.us-east-1.amazonaws.com/tech-challenge/fiap-soat-tech-challenge-fase-3-app:latest
+  image:
+    repositoryPrefix: 436648017334.dkr.ecr.us-east-1.amazonaws.com/tech-challenge
+    tag: latest
   imagePullPolicy: Always
   replicas: 1
   resources:
