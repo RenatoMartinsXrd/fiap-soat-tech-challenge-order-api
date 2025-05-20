@@ -13,7 +13,7 @@ class CreateCustomerStrategyTest {
     @Test
     void shouldCallSaveAndReturnCreatedCustomerWhenCustomerIsInvalid() {
         CustomerGatewayPort gateway = mock(CustomerGatewayPort.class);
-        Customer input = new Customer(); // cpf, email, name estão nulos → cliente inválido
+        Customer input = new Customer();
 
         when(gateway.save(any(Customer.class))).thenReturn(input);
 
