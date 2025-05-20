@@ -24,6 +24,7 @@ jobs:
   pre-build:
     name: Pre Building
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -33,6 +34,12 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '21'
+
+      - name: Unit Tests
+        run: mvn -B clean test
+
+      - name: Coverage
+        run: mvn -B clean verify
 
       - name: Construir e testar
         run: mvn clean install
