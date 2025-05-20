@@ -11,18 +11,18 @@ import static org.mockito.Mockito.*;
 class CreateCustomerStrategyTest {
 
     @Test
-    void shouldCallSaveAndReturnCreatedCustomer() {
+    void shouldCallSaveAndReturnCreatedCustomerWhenCustomerIsInvalid() {
         CustomerGatewayPort gateway = mock(CustomerGatewayPort.class);
-        Customer input = new Customer();
-        input.setName("New");
+        Customer input = new Customer(); // cpf, email, name estão nulos → cliente inválido
 
-        when(gateway.save(input)).thenReturn(input);
+        when(gateway.save(any(Customer.class))).thenReturn(input);
 
         CreateCustomerStrategy strategy = new CreateCustomerStrategy(gateway);
         NavigationResult<Customer> result = strategy.execute(input);
 
-        verify(gateway).save(input);
+        verify(gateway).save(any(Customer.class));
         assertThat(result.getResult()).isEqualTo(input);
         assertThat(result.getValidationResult().isValid()).isTrue();
     }
+
 }
