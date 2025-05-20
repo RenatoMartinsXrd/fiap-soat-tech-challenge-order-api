@@ -35,8 +35,14 @@ jobs:
           distribution: 'corretto'
           java-version: '21'
 
-      - name: Rodar testes e validar cobertura
-        run: mvn -B clean verify
+      - name: Verificar se existem testes e rodar cobertura
+        run: |
+          if ! find src/test/java -name "*Test.java" | grep -q .; then
+            echo "Nenhum teste encontrado. Abortando pipeline."
+            exit 1
+          fi
+          
+          mvn -B clean verify
 
       - name: Construir e testar
         run: mvn clean install
