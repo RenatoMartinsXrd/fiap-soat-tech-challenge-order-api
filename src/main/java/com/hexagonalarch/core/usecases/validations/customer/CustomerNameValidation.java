@@ -7,7 +7,7 @@ import com.hexagonalarch.core.usecases.validations.Validator;
 public class CustomerNameValidation implements Validator<Customer> {
     @Override
     public ValidationResult validate(Customer customer) {
-        if (customer.getName() == null || customer.getName().isEmpty()) {
+        if (customer == null || customer.getName() == null || customer.getName().isEmpty()) {
             return new ValidationResult(false, "Nome não enviado");
         }
         return new ValidationResult(true, null);

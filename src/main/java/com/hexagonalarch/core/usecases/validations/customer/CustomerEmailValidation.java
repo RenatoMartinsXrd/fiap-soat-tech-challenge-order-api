@@ -7,7 +7,7 @@ import com.hexagonalarch.core.usecases.validations.Validator;
 public class CustomerEmailValidation implements Validator<Customer> {
     @Override
     public ValidationResult validate(Customer customer) {
-        if (customer.getEmail() == null || customer.getEmail().isEmpty()) {
+        if (customer == null || customer.getEmail() == null || customer.getEmail().isEmpty()) {
             return new ValidationResult(false, "Email não enviado");
         }
         return new ValidationResult(true, null);

@@ -52,7 +52,7 @@ class IdentifyOrCreateCustomerFactoryTest {
     void shouldReturnDefaultStrategyWhenOnlyCpfIsInvalidAndMissingFields() {
         Customer customer = new Customer();
         customer.setCpf("");
-        customer.setEmail(null);
+        customer.setEmail("x@x.com");
         customer.setName(null);
 
         CustomerStrategy strategy = factory.getStrategy(customer);
