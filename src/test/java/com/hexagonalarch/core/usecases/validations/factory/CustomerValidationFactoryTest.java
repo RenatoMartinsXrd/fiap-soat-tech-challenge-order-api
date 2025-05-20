@@ -4,10 +4,6 @@ import com.hexagonalarch.core.domain.Customer;
 import com.hexagonalarch.core.usecases.validations.CompositeValidator;
 import com.hexagonalarch.core.usecases.validations.ValidationResult;
 import com.hexagonalarch.core.usecases.validations.Validator;
-import com.hexagonalarch.core.usecases.validations.customer.CustomerCpfValidation;
-import com.hexagonalarch.core.usecases.validations.customer.CustomerEmailValidation;
-import com.hexagonalarch.core.usecases.validations.customer.CustomerIsNotNullValidation;
-import com.hexagonalarch.core.usecases.validations.customer.CustomerNameValidation;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
