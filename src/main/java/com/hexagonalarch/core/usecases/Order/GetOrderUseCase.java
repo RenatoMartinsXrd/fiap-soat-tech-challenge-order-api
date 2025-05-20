@@ -8,7 +8,6 @@ import com.hexagonalarch.core.ports.usecases.Order.GetOrderUseCasePort;
 import com.hexagonalarch.shared.exception.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 public class GetOrderUseCase implements GetOrderUseCasePort {
     private final OrderGatewayPort orderGatewayPort;
