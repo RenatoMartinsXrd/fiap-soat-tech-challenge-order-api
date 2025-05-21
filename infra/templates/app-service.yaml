@@ -1,14 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-app
+  name: {{ .Release.Name }}-order-service
 spec:
   selector:
-    app: {{ .Release.Name }}-app
+    app: {{ .Release.Name }}-order-app
   ports:
-      - protocol: TCP
-        port: 8080
-        targetPort: 8080
-        nodePort: 30081
-  type: NodePort
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
   externalTrafficPolicy: Local
