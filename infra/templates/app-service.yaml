@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-order-service
+  name: {{ .Release.Name }}-app
 spec:
   selector:
-    app: {{ .Release.Name }}-order-app
+    app: {{ .Release.Name }}-app
   ports:
     - protocol: TCP
       port: 8080
