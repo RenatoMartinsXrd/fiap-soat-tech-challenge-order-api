@@ -3,11 +3,10 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-app
 spec:
-  selector:
-    app: {{ .Release.Name }}-app
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-  type: ClusterIP
-  externalTrafficPolicy: Local
+  selector:
+    app: {{ .Release.Name }}-app
