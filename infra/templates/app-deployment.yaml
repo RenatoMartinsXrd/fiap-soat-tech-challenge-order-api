@@ -60,7 +60,7 @@ spec:
           image: "{{ .Values.app.image.repositoryPrefix }}/{{ .Release.Name }}:{{ .Values.app.image.tag }}"
           imagePullPolicy: Always
           ports:
-            - containerPort: 8082
+            - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
               valueFrom:
@@ -103,13 +103,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8082
+              port: 8080
             initialDelaySeconds: 15
             periodSeconds: 10
 
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8082
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5

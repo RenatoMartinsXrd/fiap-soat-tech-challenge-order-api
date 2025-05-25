@@ -38,7 +38,7 @@ Microserviço responsável pelo processo de gestão de pedidos da lanchonete dig
    docker-compose up --build
    ```
 
-3. A API estará disponível em [http://localhost:8082](http://localhost:8082).
+3. A API estará disponível em [http://localhost:8080](http://localhost:8080).
 
 4. Caso precise acessar o banco de dados, pode usar o PGAdmin na porta [http://localhost:5051](http://localhost:5052).
 
@@ -48,7 +48,7 @@ Microserviço responsável pelo processo de gestão de pedidos da lanchonete dig
 
 - A documentação da API pode ser acessada através do Swagger UI. Abra o seguinte URL no seu navegador:
   ```sh
-  http://localhost:8082/swagger-ui/index.html
+  http://localhost:8080/swagger-ui/index.html
   ```
 
 ---
